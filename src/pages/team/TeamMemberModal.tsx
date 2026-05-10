@@ -4,28 +4,29 @@ import * as LucideIcons from 'lucide-react';
 import type { CoreTeamMember } from '../../types/api';
 import type { TeamMemberModalProps } from '../../types/components';
 
-/* ── Safe Icon Helper ── */
 function DynamicIcon({ name, ...props }: { name: keyof typeof LucideIcons; [key: string]: unknown }): ReactNode {
-  const Icon = LucideIcons[name] || LucideIcons.HelpCircle;
-  return <Icon {...props} />;
+  const Icon = (LucideIcons as Record<string, React.ComponentType<Record<string, unknown>>>)[name] ?? LucideIcons.HelpCircle;
+  return <Icon {...(props as Record<string, unknown>)} />;
 }
 
-// ── Copy Popup ──
 function CopyPopup({ value, onClose }: { value: string; onClose: () => void }): ReactNode {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = (): void => {
     navigator.clipboard.writeText(value).then(() => {
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      window.setTimeout(() => setCopied(false), 2000);
     });
   };
 
   useEffect(() => {
-    const handler = (e: globalThis.MouseEvent): void => {
-      if (e.target instanceof Element && !e.target.closest('.copy-popup')) onClose();
+    const handler = (event: globalThis.MouseEvent): void => {
+      if (event.target instanceof Element && !event.target.closest('.copy-popup')) {
+        onClose();
+      }
     };
-    setTimeout(() => document.addEventListener('click', handler), 0);
+
+    window.setTimeout(() => document.addEventListener('click', handler), 0);
     return () => document.removeEventListener('click', handler);
   }, [onClose]);
 
@@ -40,21 +41,22 @@ function CopyPopup({ value, onClose }: { value: string; onClose: () => void }): 
   );
 }
 
-// ── Normalize WhatsApp: handle plain numbers OR full URLs ──
 function getWhatsappDisplay(raw: string | null): string | null {
   if (!raw) return null;
-  if (raw.startsWith('http')) return raw;
-  return raw;
+  return raw.startsWith('http') ? raw : raw;
 }
 
-// ── Modal Content ──
 function ModalContent({ member, onClose }: { member: CoreTeamMember; onClose: () => void }): ReactNode {
   const [activePopup, setActivePopup] = useState<'whatsapp' | 'email' | null>(null);
 
   useEffect(() => {
-    const handler = (e: KeyboardEvent): void => { if (e.key === 'Escape') onClose(); };
+    const handler = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape') onClose();
+    };
+
     window.addEventListener('keydown', handler);
     document.body.style.overflow = 'hidden';
+
     return () => {
       window.removeEventListener('keydown', handler);
       document.body.style.overflow = '';
@@ -67,28 +69,28 @@ function ModalContent({ member, onClose }: { member: CoreTeamMember; onClose: ()
   return (
     <div
       className="modal-overlay"
-      onClick={(e: MouseEvent<HTMLDivElement>) => { if (e.target === e.currentTarget) onClose(); }}
+      onClick={(event: MouseEvent<HTMLDivElement>) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
     >
       <div className="modal-box">
-        
         <button className="modal-close" onClick={onClose} aria-label="Close">
           <DynamicIcon name="X" size={20} />
         </button>
 
-        <div className="modal-glow-orb" style={{ position: 'absolute', top: '-20px', left: '-20px', width: '80px', height: '80px', background: 'radial-gradient(circle, rgba(238,34,34,0.3) 0%, transparent 70%)', filter: 'blur(10px)', pointerEvents: 'none' }} />
+        <div
+          className="modal-glow-orb"
+          style={{ position: 'absolute', top: '-20px', left: '-20px', width: '80px', height: '80px', background: 'radial-gradient(circle, rgba(238,34,34,0.3) 0%, transparent 70%)', filter: 'blur(10px)', pointerEvents: 'none' }}
+        />
 
-        {/* Photo with glowing ring */}
         <div style={{ position: 'relative', width: '108px', height: '108px', margin: '0 auto 16px' }}>
           <img src={member.photo} alt={member.name} className="modal-photo" />
           <div className="modal-photo-ring" />
         </div>
 
-        
         <div className="modal-name">{member.name}</div>
         <div className="modal-role">{member.role}</div>
 
-        
-        {/* Info Card */}
         <div className="modal-info" style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)' }}>
           <div className="modal-info-row">
             <span className="modal-info-label" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -110,38 +112,35 @@ function ModalContent({ member, onClose }: { member: CoreTeamMember; onClose: ()
           </div>
         </div>
 
-        
         {member.achievements && member.achievements.length > 0 && (
           <div className="modal-achievements">
             <div className="modal-achievements-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <DynamicIcon name="Trophy" size={16} /> Achievements
             </div>
             <ul className="modal-achievements-list">
-              {member.achievements.map((ach, idx) => (
-                <li key={idx} className="modal-achievement-item">{ach}</li>
+              {member.achievements.map((achievement, index) => (
+                <li key={index} className="modal-achievement-item">{achievement}</li>
               ))}
             </ul>
           </div>
         )}
 
-        
         {member.testimonials && member.testimonials.length > 0 && (
           <div className="modal-testimonials">
             <div className="modal-testimonials-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <DynamicIcon name="MessageCircle" size={16} /> Testimonials
             </div>
             <ul className="modal-testimonials-list">
-              {member.testimonials.map((t, idx) => (
-                <li key={idx} className="modal-testimonial-item">
-                  <span className="testimonial-text">“{t.text}”</span>
-                  <span className="testimonial-author">- {t.author}</span>
+              {member.testimonials.map((testimonial, index) => (
+                <li key={index} className="modal-testimonial-item">
+                  <span className="testimonial-text">“{testimonial.text}”</span>
+                  <span className="testimonial-author">- {testimonial.author}</span>
                 </li>
               ))}
             </ul>
           </div>
         )}
 
-        
         {hasSocial && (
           <div className="modal-social">
             {member.linkedin && (
@@ -160,8 +159,8 @@ function ModalContent({ member, onClose }: { member: CoreTeamMember; onClose: ()
               <div style={{ position: 'relative' }}>
                 <button
                   className="modal-social-btn btn-whatsapp"
-                  onClick={(e) => {
-                    e.stopPropagation();
+                  onClick={(event) => {
+                    event.stopPropagation();
                     setActivePopup(activePopup === 'whatsapp' ? null : 'whatsapp');
                   }}
                   style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', borderRadius: '50px', fontSize: '.75rem', fontWeight: 800 }}
@@ -178,8 +177,8 @@ function ModalContent({ member, onClose }: { member: CoreTeamMember; onClose: ()
               <div style={{ position: 'relative' }}>
                 <button
                   className="modal-social-btn btn-contact"
-                  onClick={(e) => {
-                    e.stopPropagation();
+                  onClick={(event) => {
+                    event.stopPropagation();
                     setActivePopup(activePopup === 'email' ? null : 'email');
                   }}
                   style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', borderRadius: '50px', fontSize: '.75rem', fontWeight: 800 }}
@@ -198,9 +197,9 @@ function ModalContent({ member, onClose }: { member: CoreTeamMember; onClose: ()
   );
 }
 
-// ── Export: renders via Portal so parent containers never clip it ──
 export default function TeamMemberModal({ member, onClose }: TeamMemberModalProps): ReactNode {
   if (!member) return null;
+
   return createPortal(
     <ModalContent member={member} onClose={onClose} />,
     document.body

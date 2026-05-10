@@ -8,7 +8,7 @@ import type { TeamSectionProps } from '../../types/components';
 
 const ANTI_GRAVITY_DELAYS = [-0.0, -2.1, -4.2, -1.0, -3.3, -5.5, -0.7, -6.1, -2.8, -4.9, -1.6, -3.8];
 
-function MemberCard({ member, idx, onClick }: {
+function MemberCard({ member, idx, onClick }: { 
   member: CoreTeamMember;
   idx: number;
   onClick: (member: CoreTeamMember) => void;
