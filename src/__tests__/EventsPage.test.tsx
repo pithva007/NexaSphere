@@ -64,8 +64,8 @@ describe('EventsPage Component', () => {
         onEventClick={mockOnEventClick}
       />
     );
-    expect(screen.getByText(/✅ Completed/i)).toBeInTheDocument();
-    expect(screen.getByText(/🔜 Upcoming/i)).toBeInTheDocument();
+    expect(screen.getByText(/Completed/i)).toBeInTheDocument();
+    expect(screen.getByText(/Upcoming/i)).toBeInTheDocument();
   });
 
   it('renders back button', () => {

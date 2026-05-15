@@ -13,6 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin/core-team")
+@SuppressWarnings("null")
 public class CoreTeamController {
 
     private final CoreTeamRepository repo;

@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/activity-events")
+@SuppressWarnings("null")
 public class ActivityEventsController {
 
     private final ActivityEventRepository repo;

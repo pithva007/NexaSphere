@@ -13,6 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin/events")
+@SuppressWarnings("null")
 public class EventsController {
 
     private final EventRepository repo;

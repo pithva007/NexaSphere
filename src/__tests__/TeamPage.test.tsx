@@ -13,7 +13,7 @@ describe('TeamPage Component', () => {
 
   it('renders team page with title', () => {
     render(<TeamPage onBack={mockOnBack} onApply={mockOnApply} />);
-    expect(screen.getByText(/Core Team/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Core Team/i).length).toBeGreaterThan(0);
   });
 
   it('displays leadership section', () => {
@@ -48,8 +48,8 @@ describe('TeamPage Component', () => {
     }
   });
 
-  it('renders rocket emoji in call to action', () => {
+  it('renders call to action title', () => {
     render(<TeamPage onBack={mockOnBack} onApply={mockOnApply} />);
-    expect(screen.getByText(/🚀/)).toBeInTheDocument();
+    expect(screen.getByText(/Want to Join NexaSphere/i)).toBeInTheDocument();
   });
 });

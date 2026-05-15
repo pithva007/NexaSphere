@@ -7,10 +7,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.nexasphere.model.entity.EventEntity;
-import org.nexasphere.model.events.AdminEvent;
-import org.nexasphere.model.events.EventCreatedEvent;
-import org.nexasphere.model.events.EventDeletedEvent;
-import org.nexasphere.model.events.EventUpdatedEvent;
+import org.nexasphere.event.AdminEvent;
+import org.nexasphere.event.AdminEventPublisher;
+import org.nexasphere.event.EventCreatedEvent;
+import org.nexasphere.event.EventDeletedEvent;
+import org.nexasphere.event.EventUpdatedEvent;
+import org.junit.jupiter.api.BeforeEach;
 import org.nexasphere.repository.EventRepository;
 import org.nexasphere.service.crud.EventService;
 import org.nexasphere.util.Sanitizer;
@@ -26,6 +28,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@SuppressWarnings("null")
 class EventServiceTest {
 
     @Mock

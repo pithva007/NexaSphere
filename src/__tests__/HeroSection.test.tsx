@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import HeroSection from '../pages/home/HeroSection';
 
 describe('HeroSection Component', () => {
@@ -28,7 +28,7 @@ describe('HeroSection Component', () => {
       <HeroSection onTabChange={mockOnTabChange} onApply={mockOnApply} onJoin={mockOnJoin} />
     );
     expect(screen.getByText(/Join as Member/i)).toBeInTheDocument();
-    expect(screen.getByText(/Core Team/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Core Team/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/Apply for Core Team/i)).toBeInTheDocument();
   });
 
@@ -54,8 +54,8 @@ describe('HeroSection Component', () => {
     render(
       <HeroSection onTabChange={mockOnTabChange} onApply={mockOnApply} onJoin={mockOnJoin} />
     );
-    const teamBtn = screen.getByText(/Core Team/i);
-    fireEvent.click(teamBtn);
+    const teamBtns = screen.getAllByText('Core Team');
+    fireEvent.click(teamBtns[0]);
     expect(mockOnTabChange).toHaveBeenCalledWith('Team');
   });
 
@@ -63,7 +63,9 @@ describe('HeroSection Component', () => {
     render(
       <HeroSection onTabChange={mockOnTabChange} onApply={mockOnApply} onJoin={mockOnJoin} />
     );
-    vi.runAllTimers();
+    act(() => {
+      vi.runAllTimers();
+    });
     expect(screen.getByText(/Members/i)).toBeInTheDocument();
     expect(screen.getByText(/Activities/i)).toBeInTheDocument();
   });

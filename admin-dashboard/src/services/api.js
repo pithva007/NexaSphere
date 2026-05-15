@@ -1,18 +1,23 @@
 import { eventEmitter, EVENTS } from './eventEmitter';
 import { auth } from './auth';
 
-import ayushImg from '../assets/images/team/ayush.png';
-import tanishkImg from '../assets/images/team/tanishk.png';
-import tusharImg from '../assets/images/team/tushar.png';
-import swayamImg from '../assets/images/team/swayam.png';
-import aryanImg from '../assets/images/team/aryan.png';
-import vartikaImg from '../assets/images/team/vartika.png';
-import ankitImg from '../assets/images/team/ankit.png';
-import surjeetImg from '../assets/images/team/surjeet.png';
-import asthaImg from '../assets/images/team/astha.png';
-import aryaImg from '../assets/images/team/arya.png';
-import roshniImg from '../assets/images/team/roshni.png';
-import vikasImg from '../assets/images/team/vikas.png';
+// Team images are served from the main app's public dir.
+// Using URL strings avoids broken asset imports in the admin monorepo build.
+const MAIN_APP = import.meta.env.VITE_MAIN_APP_URL || 'https://nexasphere-glbajaj.vercel.app';
+const teamImg = (name) => `${MAIN_APP}/assets/${name}`;
+
+const ayushImg   = teamImg('ayush.png');
+const tanishkImg = teamImg('tanishk.png');
+const tusharImg  = teamImg('tushar.png');
+const swayamImg  = teamImg('swayam.png');
+const aryanImg   = teamImg('aryan.png');
+const vartikaImg = teamImg('vartika.png');
+const ankitImg   = teamImg('ankit.png');
+const surjeetImg = teamImg('surjeet.png');
+const asthaImg   = teamImg('astha.png');
+const aryaImg    = teamImg('arya.png');
+const roshniImg  = teamImg('roshni.png');
+const vikasImg   = teamImg('vikas.png');
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8080';
 
