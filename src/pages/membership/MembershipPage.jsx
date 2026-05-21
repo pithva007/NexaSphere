@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DynamicIcon, IconArrowLeft, IconArrowRight, IconBolt, IconShieldCheck, IconUsers } from '../../shared/Icons';
 import Footer from '../../shared/Footer';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 const WHATSAPP_COMMUNITY = 'https://chat.whatsapp.com/Jjc5cuUKENu0RC1vWSEs20';
 const LINKEDIN_PAGE      = 'https://www.linkedin.com/showcase/glbajaj-nexasphere/';
@@ -203,7 +204,7 @@ export default function MembershipPage({ onBack }) {
   const [err,  setErr]    = useState('');
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
   const topRef = useRef(null);
-
+  const [captchaToken, setCaptchaToken] = useState('');
   
   useEffect(() => {
     try {
@@ -296,6 +297,7 @@ export default function MembershipPage({ onBack }) {
         submittedAt:  new Date().toISOString(),
         userAgent:    navigator.userAgent,
         formType:     'membership',
+        captchaToken: captchaToken
       };
 
       const res = await fetch(MEMBERSHIP_SCRIPT_URL, {
@@ -895,17 +897,28 @@ export default function MembershipPage({ onBack }) {
                       </span>
                     </button>
                   ) : (
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', width: '100%' }}>
+                    <Turnstile
+                      siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                      onSuccess={(token) => {
+                        console.log("Turnstile Token generated:", token);
+                        setCaptchaToken(token);
+                      }}
+                    />
                     <button
                       className="btn btn-primary btn-ripple"
                       type="button"
-                      disabled={busy || !canNext}
+                      disabled={busy || !canNext || !captchaToken}
                       onClick={() => {
                         if (!canNext) { setErr('Please complete the required fields (*) to submit.'); return; }
-                        submit();
+                        if (!captchaToken) { setErr('Please complete the CAPTCHA to submit.'); return; }
+                        submit(); 
                       }}
                     >
                       {busy ? 'Submitting…' : 'Submit Membership Form'}
                     </button>
+                  </div>
                   )}
                 </div>
               </>
