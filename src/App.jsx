@@ -268,12 +268,26 @@ export default function App() {
     const base = (import.meta?.env?.VITE_API_BASE || '').replace(/\/+$/, '');
     const url  = base ? `${base}/api/content/events` : '/api/content/events';
     fetch(url)
-      .then(r => r.ok ? r.json() : Promise.reject(new Error('Failed')))
+      .then(async (r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
       .then(data => {
         if (!alive) return;
-        if (Array.isArray(data?.events) && data.events.length > 0) setEventsData(data.events);
+        if (data && Array.isArray(data.events)) {
+          setEventsData(data.events);
+        } else if (Array.isArray(data)) {
+          setEventsData(data);
+        } else {
+          console.warn('Malformed API response for events:', data);
+          setEventsData([]);
+        }
       })
-      .catch(() => {});
+      .catch((err) => {
+        if (!alive) return;
+        console.error('Failed to fetch events:', err);
+        setEventsData([]);
+      });
     return () => { alive = false; };
   }, []);
 
