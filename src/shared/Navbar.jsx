@@ -104,26 +104,41 @@ export default function Navbar({ activeTab, onTabChange, onToggleTheme, theme, o
             <span className="ns-nav-brand">NexaSphere</span>
           </div>
 
-          <div className="ns-nav-actions">
-            <NotificationBell />
-            <BookmarkToggle onToggle={onToggleBookmarks} />
-            <div className="ns-nav-ctas">
-              <button className="btn btn-sm btn-outline ns-nav-cta-btn" onClick={onJoin} aria-label="Join as Member">Join</button>
-              <button className="btn btn-sm btn-primary ns-nav-cta-btn" onClick={onApply} aria-label="Apply for Core Team">Apply</button>
-            </div>
-            <ThemeToggle theme={theme} onToggle={onToggleTheme} />
-            <button
-              className={`ns-nav-menu-toggle${menuOpen ? ' open' : ''}`}
-              onClick={() => compact && setMenuOpen(open => !open)}
-              aria-label="Toggle navigation menu"
-              aria-expanded={menuOpen}
-            >
-              <span />
-              <span />
-              <span />
-            </button>
-          </div>
-        </div>
+<div className="ns-nav-actions">
+  <NotificationBell />
+  <BookmarkToggle onToggle={onToggleBookmarks} />
+
+  <div className="ns-nav-ctas">
+    <button
+      className="btn btn-sm btn-outline ns-nav-cta-btn"
+      onClick={onJoin}
+      aria-label="Join as Member"
+    >
+      Join
+    </button>
+
+    <button
+      className="btn btn-sm btn-primary ns-nav-cta-btn"
+      onClick={onApply}
+      aria-label="Apply for Core Team"
+    >
+      Apply
+    </button>
+  </div>
+
+  <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+
+  <button
+    className={`ns-nav-menu-toggle${menuOpen ? ' open' : ''}`}
+    onClick={() => compact && setMenuOpen(open => !open)}
+    aria-label="Toggle navigation menu"
+    aria-expanded={menuOpen}
+  >
+    <span />
+    <span />
+    <span />
+  </button>
+</div>
 
         <div
           className={`ns-nav-menu${compact && menuOpen ? ' open' : ''}`}
