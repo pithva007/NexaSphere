@@ -46,6 +46,7 @@ import CollabPage          from './pages/collab/CollabPage';
 import PortfolioBuilder    from './components/portfolio/PortfolioBuilder';
 import PublicPortfolio     from './pages/portfolio/PublicPortfolio';
 import DashboardPage       from './pages/dashboard/DashboardPage';
+import AnalyticsPage       from './pages/analytics/AnalyticsPage';
 
 import { activityPages }   from './data/activities/index';
 import { events as fallbackEvents } from './data/eventsData';
@@ -58,7 +59,7 @@ import { BookmarkProvider } from './context/BookmarkContext';
 import BookmarksDrawer from './components/bookmarks/BookmarksDrawer';
 
 const MNH = 88, DNH = 64;
-const TABS = ['Home','Dashboard','Activities','Events','Projects','Roadmaps','Portfolio','Collab','About','Team','Contact'];
+const TABS = ['Home','Dashboard','Analytics','Activities','Events','Projects','Roadmaps','Portfolio','Collab','About','Team','Contact'];
 
 /* ── Page wipe transition ── */
 function Wipe({ on, ph }) {
@@ -402,7 +403,7 @@ export default function App() {
   }, []);
 
   const onTab = useCallback(tab => {
-    if (['Dashboard','Activities','Events','Projects','Roadmaps','Portfolio','Collab','About','Team','Contact'].includes(tab)) {
+    if (['Dashboard','Analytics','Activities','Events','Projects','Roadmaps','Portfolio','Collab','About','Team','Contact'].includes(tab)) {
       nav(() => { setPage({ type:'section', section:tab }); setActiveTab(tab); });
       return;
     }
@@ -495,6 +496,7 @@ export default function App() {
         {page ? (
           <PageIn k={page.type + (page.section || page.activityKey)}>
             {page.section === 'Dashboard'  && <DashboardPage onBack={onBackHome}/>}
+            {page.section === 'Analytics'  && <AnalyticsPage onBack={onBackHome}/>}
             {page.section === 'Activities' && <ActivitiesPage onNavigate={onNavigate} onBack={onBackHome}/>}
             {page.section === 'Events'     && <EventsPage onBack={onBackHome} onEventClick={onKSSClick} events={eventsData}/>}
             {page.section === 'Projects'   && <ProjectsPage onBack={onBackHome}/>}

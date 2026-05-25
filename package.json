@@ -25,6 +25,8 @@
     "@sentry/tracing": "^7.84.0",
     "@tensorflow/tfjs": "^4.22.0",
     "framer-motion": "^12.38.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
     "lucide-react": "^0.460.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
