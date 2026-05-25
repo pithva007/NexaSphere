@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../utils/apiClient.js';
 import InterestSelector from '../../components/dashboard/InterestSelector';
 import QuestTracker from '../../components/dashboard/QuestTracker';
 import Leaderboard from '../../components/dashboard/Leaderboard';
@@ -49,9 +50,8 @@ export default function DashboardPage({ onBack }) {
     setLoadingRecs(true);
     try {
       const base = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
-      const res = await fetch(`${base}/recommend/events/${currentUser.id}`);
-      if (res.ok) {
-        const data = await res.json();
+      const data = await apiClient(`${base}/recommend/events/${currentUser.id}`);
+      if (data) {
         setRecommendations(data.recommended_events || []);
       }
     } catch (e) {

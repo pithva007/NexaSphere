@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import apiClient from '../../utils/apiClient.js';
 import { DynamicIcon, IconArrowLeft, IconArrowRight, IconBolt, IconShieldCheck, IconSpark, IconUsers } from '../../shared/Icons';
 import Footer from '../../shared/Footer';
 import useFormValidation from '../../hooks/useFormValidation';
@@ -1258,13 +1259,12 @@ export default function RecruitmentPage({ onBack }) {
         }
       } catch { /* ignore */ }
 
-      const res = await fetch(RECRUITMENT_SCRIPT_URL, {
+      const data = await apiClient(RECRUITMENT_SCRIPT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || (data && data.ok === false)) {
+      }).catch(() => ({}));
+      if (data && data.ok === false) {
         throw new Error(data?.error || 'Submission failed');
       }
       try {

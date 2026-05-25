@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import apiClient from '../utils/apiClient.js';
 import '../styles/chatbot.css';
 import PromptHistorySidebar from '../components/history/PromptHistorySidebar';
 import SearchBar from '../components/history/SearchBar';
@@ -56,12 +57,11 @@ const Chatbot = () => {
     setInput('');
 
     try {
-      const response = await fetch('http://localhost:8000/ai/chat', {
+      const data = await apiClient('http://localhost:8000/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: currentInput }),
       });
-      const data = await response.json();
       setMessages(prev => [...prev, { role: 'bot', text: data.reply }]);
     } catch (e) {
       setMessages(prev => [...prev, { role: 'bot', text: 'Nexa-AI: Core Link Failure. Try again.' }]);

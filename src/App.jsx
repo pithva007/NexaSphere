@@ -36,6 +36,7 @@ import AboutPage           from './pages/about/AboutPage';
 import TeamPage            from './pages/team/TeamPage';
 import ContactPage         from './pages/contact/ContactPage';
 import dynamic from 'next/dynamic';
+import apiClient from './utils/apiClient.js';
 
 const RecruitmentPage = dynamic(() => import('./pages/recruitment/RecruitmentPage'), { ssr: false });
 const MembershipPage = dynamic(() => import('./pages/membership/MembershipPage'), { ssr: false });
@@ -274,8 +275,7 @@ export default function App() {
     let alive = true;
     const base = (import.meta?.env?.VITE_API_BASE || '').replace(/\/+$/, '');
     const url  = base ? `${base}/api/content/events` : '/api/content/events';
-    fetch(url)
-      .then(r => r.ok ? r.json() : Promise.reject(new Error('Failed')))
+    apiClient(url)
       .then(data => {
         if (!alive) return;
         if (Array.isArray(data?.events) && data.events.length > 0) setEventsData(data.events);
