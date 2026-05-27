@@ -29,13 +29,9 @@ function parseBearer(authHeader) {
  * @param {Object} httpServer - HTTP server instance
  */
 export function initializeSocketIO(httpServer) {
-  const allowedOrigins = process.env.CORS_ORIGIN
-    ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim()).filter(Boolean)
-    : [process.env.FRONTEND_URL || 'http://localhost:5173'];
-
   io = new Server(httpServer, {
     cors: {
-      origin: allowedOrigins,
+      origin: process.env.FRONTEND_URL || 'http://localhost:5173',
       credentials: true,
     },
     reconnection: true,
@@ -80,15 +76,48 @@ export function _onConnection(socket) {
     socket.join('admin-room');
   }
 
+  // Keep track of identify operations to rate limit floods per-socket (Max 3 events per lifetime)
+  let identifyCount = 0;
+
   // Store connected user
   socket.on('user:identify', (userData) => {
+    // 1. Enforce Per-Socket Identification Rate Limiting
+    identifyCount++;
+    if (identifyCount > 3) {
+      logger.warn('Socket identification flood detected, forcing disconnect', { socketId: socket.id });
+      socket.disconnect(true);
+      return;
+    }
+
+    // 2. Defensive Payload Structure & Type Validation
+    if (!userData || typeof userData !== 'object') {
+      logger.warn('Invalid user identification payload type rejected', { socketId: socket.id });
+      return;
+    }
+
+    const { userId, email } = userData;
+
+    // Validate fields exist and are strictly primitive strings
+    if (typeof userId !== 'string' || typeof email !== 'string') {
+      logger.warn('User identification payload fields must be primitive strings', { socketId: socket.id });
+      return;
+    }
+
+    // 3. Strict Size Bounds (128 char for IDs, 256 for Email)
+    if (userId.length > 128 || email.length > 256) {
+      logger.warn('Oversized user identification payload values rejected', { socketId: socket.id });
+      return;
+    }
+
+    // 4. Safe Deep Copy (Persist sanitized primitives)
     connectedUsers.set(socket.id, {
-      id: userData.userId,
-      email: userData.email,
-      socketId: socket.id,
+      id: String(userId),
+      email: String(email),
+      socketId: String(socket.id),
       connectedAt: new Date(),
     });
-    logger.info('User identified', { userId: userData.userId, socketId: socket.id });
+    
+    logger.info('User identified successfully', { userId: String(userId), socketId: socket.id });
   });
 
   // Approved public-facing rooms that standard users can join
