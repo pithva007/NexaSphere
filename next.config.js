@@ -1,8 +1,10 @@
-const withBundleAnalyzer = require("@next/bundle-analyzer")({
+import withBundleAnalyzerFromNext from "@next/bundle-analyzer";
+
+const withBundleAnalyzer = withBundleAnalyzerFromNext({
   enabled: process.env.ANALYZE === "true",
 });
 
-module.exports = withBundleAnalyzer({
+export default withBundleAnalyzer({
   reactStrictMode: true,
   images: {
     domains: ["github.com", "avatars.githubusercontent.com"],
