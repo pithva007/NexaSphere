@@ -241,6 +241,9 @@ cp .env.example .env
 # Run database migrations
 npm run migrate:latest
 
+# Seed the database with dummy data
+npx prisma db seed
+
 # Start the backend server
 npm run dev
 # → Runs at http://localhost:8080
