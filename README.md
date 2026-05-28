@@ -319,6 +319,7 @@ This project is licensed under the **MIT License** — see [LICENSE](./LICENSE) 
 [Live App](https://nexasphere-glbajaj.vercel.app/) · [Report Bug](https://github.com/Piyush025s07/NexaSphere-GSSOc/issues/new?template=bug_report.md) · [Request Feature](https://github.com/Piyush025s07/NexaSphere-GSSOc/issues/new?template=feature_request.md)
 
 <!-- CONTRIBUTORS_START -->
+<a href="https://github.com/ionfwsrijan"><img src="https://github.com/ionfwsrijan.png" width="50px" alt="ionfwsrijan" title="ionfwsrijan" /></a>
 <!-- CONTRIBUTORS_END -->
 
 </div>
