@@ -440,7 +440,18 @@ app.put('/api/portfolio', portfolioRateLimiter, async (req, res) => {
       });
     }
 
-    const isAuthorized = await portfolioRepository.verifyPasskey(username, passkey);
+    // Determine whether this is a new registration or an update to an existing portfolio.
+    // verifyPasskey must know this so it can apply the correct authorization logic:
+    //   - New registration  → no stored passkey exists yet → any valid passkey is accepted (allowNew: true)
+    //   - Existing portfolio → stored passkey hash must match → wrong passkey returns false (allowNew: false)
+    // Without this distinction, verifyPasskey previously returned true for any username
+    // that wasn't found in the DB, allowing unauthenticated overwrites of existing portfolios.
+    const existingPortfolio = await portfolioRepository.getByUsername(username);
+    const isNewRegistration = !existingPortfolio;
+
+    const isAuthorized = await portfolioRepository.verifyPasskey(username, passkey, {
+      allowNew: isNewRegistration,
+    });
     if (!isAuthorized) {
       recordFailedPasskeyAttempt(username, ip);
       return res.status(401).json({ error: 'Incorrect passkey for this username' });
