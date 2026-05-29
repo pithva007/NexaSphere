@@ -16,6 +16,8 @@ import analyticsRouter from "./routes/analytics.js";
 import { initializeSocketIO, emitToRoom, getRoom } from "./config/socket.js";
 import adminStreamRouter from "./routes/adminStream.js";
 import { broadcastSSEEvent } from "./services/sseService.js";
+import documentationRouter from "./routes/documentation.js";
+import monitoringRouter from "./routes/monitoring.js";
 import rateLimit from "express-rate-limit";
 import 'dotenv/config';
 import helmet from 'helmet';
@@ -113,6 +115,10 @@ function requestLogger(req, res, next) {
 }
 
 app.use(requestLogger);
+
+// Mount monitoring + API documentation routes (previously implemented but never registered).
+app.use("/api/monitoring", monitoringRouter);
+app.use("/api", documentationRouter);
 
 const adminAuth = adminAuthMiddleware.requireAdmin;
 adminEvents.on('CORE_TEAM_MEMBER_ADDED', (event) => console.log(`[EVENT] CORE_TEAM_MEMBER_ADDED:`, event));
