@@ -62,6 +62,7 @@ import { BookmarkProvider } from './context/BookmarkContext';
 import BookmarksDrawer from './components/bookmarks/BookmarksDrawer';
 import { useTheme } from './hooks/useTheme';
 import { useInteractionEffects } from './hooks/useInteractionEffects';
+import { useBackToTop } from './hooks/useScrollLogic';
 
 import MoveToTop from "./shared/MoveToTop";
 
@@ -224,8 +225,8 @@ function Cursor() {
   );
 }
 
+/* ── Thin router shell — no hooks here, so early return is safe ── */
 export default function App() {
-  /* ── Certificate verify route detection ── */
   const verifyCertId = (() => {
     const path = window.location.pathname;
     const m = path.match(/^\/verify\/([A-Za-z0-9_%-]+)/);
@@ -240,6 +241,12 @@ export default function App() {
       />
     );
   }
+
+  return <MainApp />;
+}
+
+/* ── Main app — all hooks live here, always called unconditionally ── */
+function MainApp() {
 
   const [cinDone, setCinDone] = useState(false);
   const [activeTab, setActiveTab] = useState('Home');
