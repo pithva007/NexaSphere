@@ -24,6 +24,7 @@ import ParticleBackground from './shared/ParticleBackground';
 import GeometricGridBackground from './shared/GeometricGridBackground';
 import ScrollProgress from './shared/ScrollProgress';
 import Navbar from './shared/Navbar';
+import { DynamicIcon } from './shared/Icons';
 import HeroSection from './pages/home/HeroSection';
 import ActivitiesSection from './pages/activities/ActivitiesSection';
 import EventsSection from './pages/events/EventsSection';
@@ -566,7 +567,7 @@ function MainRouter({
       '/portfolio': 'Portfolio',
       '/collab': 'Collab',
       '/about': 'About',
-      '/team': 'Team',
+      '/team': 'Core Team',
       '/contact': 'Contact',
       '/dashboard': 'Dashboard',
       '/analytics': 'Analytics',
@@ -580,12 +581,13 @@ function MainRouter({
   // Scroll-spy on home page
   useEffect(() => {
     if (location.pathname !== '/') return;
-    const HOME_SECTIONS = ['Home', 'Activities', 'Events', 'About', 'Team', 'Contact'];
+    const HOME_SECTIONS = ['Home', 'Activities', 'Events', 'About', 'Core Team', 'Contact'];
     const nh = mobile ? MNH : DNH;
     const fn = () => {
       const sy = window.scrollY + nh + 30;
       for (let i = HOME_SECTIONS.length - 1; i >= 0; i--) {
-        const el = document.getElementById(`section-${HOME_SECTIONS[i].toLowerCase()}`);
+        const idStr = HOME_SECTIONS[i] === 'Core Team' ? 'team' : HOME_SECTIONS[i].toLowerCase();
+        const el = document.getElementById(`section-${idStr}`);
         if (el && el.offsetTop <= sy) {
           setActiveTab(HOME_SECTIONS[i]);
           break;
@@ -635,7 +637,7 @@ function MainRouter({
         Portfolio: '/portfolio',
         Collab: '/collab',
         About: '/about',
-        Team: '/team',
+        'Core Team': '/team',
         Contact: '/contact',
       };
       const targetPath = routeMap[tab];
@@ -652,9 +654,10 @@ function MainRouter({
         return;
       }
       // Home-page scroll targets
+      const idStr = tab === 'Core Team' ? 'team' : tab.toLowerCase();
       if (location.pathname === '/') {
         setActiveTab(tab);
-        const el = document.getElementById(`section-${tab.toLowerCase()}`);
+        const el = document.getElementById(`section-${idStr}`);
         if (el) {
           window.scrollTo({
             top: el.offsetTop - (mobile ? MNH : DNH),
@@ -664,7 +667,7 @@ function MainRouter({
       } else {
         nav('/', () => {
           setTimeout(() => {
-            const el = document.getElementById(`section-${tab.toLowerCase()}`);
+            const el = document.getElementById(`section-${idStr}`);
             if (el) {
               window.scrollTo({
                 top: el.offsetTop - (mobile ? MNH : DNH),
@@ -693,10 +696,7 @@ function MainRouter({
 
   const onKSSClick = useCallback(
     (ev) => {
-      nav('/events', () => {
-        // Store the event to auto-open in session storage
-        sessionStorage.setItem('ns-open-event', JSON.stringify(ev));
-      });
+      nav(`/events/${ev.id || encodeURIComponent(ev.name || '')}`);
     },
     [nav]
   );
@@ -1025,13 +1025,56 @@ function ActivityDetailWrapper({ onBack, onSelectEvent }) {
 
 function EventDetailWrapper({ onBack, events }) {
   const { eventId } = useParams();
-  const event = (events || []).find(
-    (e) => String(e.id) === eventId || encodeURIComponent(e.title) === eventId
-  );
+
+  // 1. Look for a matching rich event in the activity pages conductedEvents
+  let event = null;
+  let activityColor = null;
+  let activityIcon = null;
+
+  for (const act of Object.values(activityPages)) {
+    const found = (act.conductedEvents || []).find(
+      (e) =>
+        String(e.id) === eventId ||
+        encodeURIComponent(e.name || '') === eventId ||
+        encodeURIComponent(e.shortName || '') === eventId
+    );
+    if (found) {
+      event = found;
+      activityColor = act.color;
+      activityIcon = act.icon;
+      break;
+    }
+  }
+
+  // 2. If not found in rich conductedEvents, fall back to basic events list
+  if (!event) {
+    event = (events || []).find(
+      (e) =>
+        String(e.id) === eventId ||
+        encodeURIComponent(e.name || '') === eventId ||
+        encodeURIComponent(e.shortName || '') === eventId
+    );
+  }
+
   if (!event) return <NotFoundPage onGoHome={onBack} />;
+
+  // Render with correct styling if resolved
+  const iconElement = activityIcon ? (
+    <DynamicIcon
+      name={activityIcon}
+      size={13}
+      style={{ marginRight: '4px', verticalAlign: '-1px' }}
+    />
+  ) : null;
+
   return (
     <PageIn k={`event-${eventId}`}>
-      <EventDetailPage event={event} onBack={onBack} />
+      <EventDetailPage
+        event={event}
+        activityColor={activityColor}
+        activityIcon={iconElement}
+        onBack={onBack}
+      />
     </PageIn>
   );
 }

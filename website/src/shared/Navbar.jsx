@@ -12,7 +12,7 @@ const TABS = [
   'Roadmaps',
   'Portfolio',
   'About',
-  'Team',
+  'Core Team',
   'Contact',
 ];
 
@@ -24,7 +24,7 @@ const TAB_ROUTES = {
   Roadmaps: '/roadmaps',
   Portfolio: '/portfolio',
   About: '/about',
-  Team: '/team',
+  'Core Team': '/team',
   Contact: '/contact',
 };
 
