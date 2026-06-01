@@ -100,6 +100,7 @@ const PublicPortfolio = lazy(() => import('./pages/portfolio/PublicPortfolio'));
 const DashboardPage = lazy(() => import('./pages/dashboard/DashboardPage'));
 const AnalyticsPage = lazy(() => import('./pages/analytics/AnalyticsPage'));
 const WorkspacePage = lazy(() => import('./pages/workspace/WorkspacePage'));
+const GamificationDashboard = lazy(() => import('./components/gamification/GamificationDashboard'));
 
 const MNH = 88,
   DNH = 64;
@@ -585,6 +586,7 @@ function MainRouter({
       '/contact': 'Contact',
       '/dashboard': 'Dashboard',
       '/analytics': 'Analytics',
+      '/gamification': 'Gamification',
       '/apply': 'Apply',
       '/join': 'Join',
     };
@@ -644,6 +646,7 @@ function MainRouter({
       const routeMap = {
         Dashboard: '/dashboard',
         Analytics: '/analytics',
+        Gamification: '/gamification',
         Activities: '/activities',
         Events: '/events',
         Projects: '/projects',
@@ -807,6 +810,16 @@ function MainRouter({
               element={
                 <PageIn k="dashboard">
                   <DashboardPage onBack={onBackHome} />
+                </PageIn>
+              }
+            />
+
+            {/* ── Gamification ── */}
+            <Route
+              path="/gamification"
+              element={
+                <PageIn k="gamification">
+                  <GamificationDashboard />
                 </PageIn>
               }
             />
