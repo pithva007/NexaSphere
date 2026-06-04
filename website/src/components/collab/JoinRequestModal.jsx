@@ -22,7 +22,6 @@ export default function JoinRequestModal({ team, onClose, onSubmit }) {
     try {
       await onSubmit({ pitch, skills, github, teamId: team.id });
       setSuccess(true);
-      setTimeout(onClose, 2000);
     } catch (err) {
       console.error(err);
     } finally {
@@ -106,6 +105,22 @@ export default function JoinRequestModal({ team, onClose, onSubmit }) {
               <p style={{ color: 'var(--t2)', fontSize: '0.9rem', marginTop: '8px' }}>
                 The team leader will be notified.
               </p>
+              <button
+                onClick={onClose}
+                autoFocus
+                style={{
+                  marginTop: '20px',
+                  padding: '10px 28px',
+                  background: 'linear-gradient(135deg, #CC1111, #880000)',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                Close
+              </button>
             </div>
           ) : (
             <form

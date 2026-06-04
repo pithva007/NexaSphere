@@ -48,10 +48,9 @@ export const parseCommand = (input: string, context: CommandContext) => {
 
     case 'nav':
       if (args.length > 1) {
-        const targetPage = args[1];
-        // Capitalize the first letter for the tab navigation
-        const formattedPage =
-          targetPage.charAt(0).toUpperCase() + targetPage.slice(1).toLowerCase();
+        // Join all args after 'nav' to support multi-word page names
+        // e.g. 'nav core team' → 'core team' → matched to 'Core Team'
+        const targetPage = args.slice(1).join(' ');
         const validPages = [
           'Home',
           'Activities',
@@ -61,12 +60,17 @@ export const parseCommand = (input: string, context: CommandContext) => {
           'About',
           'Team',
           'Contact',
+          'Core Team',
         ];
 
-        if (validPages.includes(formattedPage)) {
-          printToTerminal(`Navigating to ${formattedPage}...`);
+        // Case-insensitive match so 'nav core team', 'nav Core Team',
+        // and 'nav CORE TEAM' all resolve correctly
+        const matchedPage = validPages.find((p) => p.toLowerCase() === targetPage.toLowerCase());
+
+        if (matchedPage) {
+          printToTerminal(`Navigating to ${matchedPage}...`);
           setTimeout(() => {
-            navigate(formattedPage);
+            navigate(matchedPage);
             closeTerminal();
           }, 500);
         } else {
@@ -75,7 +79,7 @@ export const parseCommand = (input: string, context: CommandContext) => {
           );
         }
       } else {
-        printToTerminal('Usage: nav <page> (e.g., nav About)');
+        printToTerminal('Usage: nav <page> (e.g., nav About, nav Core Team)');
       }
       break;
 

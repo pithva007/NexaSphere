@@ -56,7 +56,11 @@ export default function RoadmapsPage({ onBack }) {
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, [selectedNode]);
 
-  // Keyboard navigation (Escape key to close panel)
+  // Keyboard navigation — dep array changed from [] to [selectedNode] to
+  // match the outside-click handler and avoid a stale closure. Previously
+  // the empty dep array caused a second redundant keydown listener to be
+  // registered on mount that was never re-registered, while the correct
+  // selectedNode-aware listener was already handled by the effect above.
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
@@ -65,7 +69,7 @@ export default function RoadmapsPage({ onBack }) {
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [selectedNode]);
 
   const IconComponent = DOMAIN_ICONS[activeDomain] || Monitor;
 
