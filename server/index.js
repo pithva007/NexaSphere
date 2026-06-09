@@ -401,9 +401,10 @@ app.get('/api/content/team', async (req, res) => {
 });
 
 // Admin Team Management
-app.get('/api/admin/core-team', adminAuth, coreTeamController.adminListCoreTeamMembers);
-app.post('/api/admin/core-team', adminAuth, coreTeamController.adminAddCoreTeamMember);
-app.delete('/api/admin/core-team/:id', adminAuth, coreTeamController.adminDeleteCoreTeamMember);
+app.get('/api/admin/core-team', adminAuthMiddleware.requireScope('settings:admin'), coreTeamController.adminListCoreTeamMembers);
+app.post('/api/admin/core-team', adminAuthMiddleware.requireScope('settings:admin'), coreTeamController.adminAddCoreTeamMember);
+app.put('/api/admin/core-team/:id', adminAuthMiddleware.requireScope('settings:admin'), coreTeamController.adminUpdateCoreTeamMember);
+app.delete('/api/admin/core-team/:id', adminAuthMiddleware.requireScope('settings:admin'), coreTeamController.adminDeleteCoreTeamMember);
 
 // Dynamic forms
 app.post('/api/forms/membership', formRateLimiter, formsController.makeHandleForm('membership'));
